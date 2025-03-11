@@ -1,22 +1,12 @@
 import discord
 import json
-import requests
+import stashtracker
 
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
 
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
-
-def get_stashes():
-    url = config['url'] + '/stashes'
-    response = requests.get(url)
-    return response.json()
-
-def get_kits_by_stash_id(stash_id):
-    url = config['url'] + f'/kits?stash_id={stash_id}'
-    response = requests.get(url)
-    return response.json()
 
 
 @client.event
@@ -29,12 +19,11 @@ async def on_message(message):
         return
 
     if message.content.startswith('?stashes'):
-        stashes = get_stashes()
-        r = ''
-        for stash in stashes:
-            kitCount = len(get_kits_by_stash_id(stash['id']))
-            dubCount = (kitCount + 53) // 54
-            r += f'{stash["name"]} - {dubCount} dubs\n'
-        await message.channel.send(r)
+        stashes = stashtracker.get_stashes()
+        response = '\n'.join(
+            f'{stash["name"]} - {(len(stashtracker.get_kits_by_stash_id(stash["id"])) + 53) // 54} dubs'
+            for stash in stashes
+        )
+        await message.channel.send(response)
 
 client.run(config['token']) 
