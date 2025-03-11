@@ -1,29 +1,33 @@
 import discord
+from discord.ext import commands
+from discord import app_commands
 import json
 import stashtracker
 
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
 
-intents = discord.Intents.all()
-client = discord.Client(intents=intents)
+class Bot(commands.Bot):
+    def __init__(self):
+        super().__init__(command_prefix="/", intents=discord.Intents.all())
+    
+    async def on_ready(self):
+        print(f"✅ Bot {self.user} has logged in successfully.")
+        guild = discord.Object(id=config['guild_id'])
+        self.tree.copy_global_to(guild=guild)
+        await self.tree.sync(guild=guild)
 
+client = Bot()
 
-@client.event
-async def on_ready():
-    print(f'{client.user.name} is ready')
+@client.tree.command(name="stashes", description="Get the list of stashes")
+@app_commands.describe()
+async def stashes(interaction: discord.Interaction):
+    stashes = stashtracker.get_stashes()
+    embed = discord.Embed(title="📦 Stashes", color=discord.Color.blue())
+    for stash in stashes:
+        kitCount = len(stashtracker.get_kits_by_stash_id(stash["id"]))
+        dubCount = (kitCount + 53) // 54
+        embed.add_field(name=stash["name"], value=f'{dubCount} dubs • {kitCount} kits', inline=False)
+    await interaction.response.send_message(embed=embed)
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-
-    if message.content.startswith('?stashes'):
-        stashes = stashtracker.get_stashes()
-        embed = discord.Embed(title="Stashes", color=discord.Color.blue())
-        for stash in stashes:
-            kits_count = (len(stashtracker.get_kits_by_stash_id(stash["id"])) + 53) // 54
-            embed.add_field(name=stash["name"], value=f'{kits_count} dubs', inline=False)
-        await message.channel.send(embed=embed)
-
-client.run(config['token']) 
+client.run(config['token'])
