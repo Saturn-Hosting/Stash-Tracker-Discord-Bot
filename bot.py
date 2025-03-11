@@ -20,10 +20,10 @@ async def on_message(message):
 
     if message.content.startswith('?stashes'):
         stashes = stashtracker.get_stashes()
-        response = '\n'.join(
-            f'{stash["name"]} - {(len(stashtracker.get_kits_by_stash_id(stash["id"])) + 53) // 54} dubs'
-            for stash in stashes
-        )
-        await message.channel.send(response)
+        embed = discord.Embed(title="Stashes", color=discord.Color.blue())
+        for stash in stashes:
+            kits_count = (len(stashtracker.get_kits_by_stash_id(stash["id"])) + 53) // 54
+            embed.add_field(name=stash["name"], value=f'{kits_count} dubs', inline=False)
+        await message.channel.send(embed=embed)
 
 client.run(config['token']) 
