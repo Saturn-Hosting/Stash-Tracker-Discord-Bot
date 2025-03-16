@@ -27,7 +27,7 @@ async def stashes(interaction: discord.Interaction):
     for stash in stashes:
         kitCount = len(stashtracker.get_kits_by_stash_id(stash["id"]))
         dubCount = (kitCount + 53) // 54
-        embed.add_field(name=f"{stash['id']} | {stash["name"]}", value=f'{dubCount} dubs • {kitCount} kits', inline=False)
+        embed.add_field(name=f"{stash['id']} | {stash['name']}", value=f'{dubCount} dubs • {kitCount} kits', inline=False)
     await interaction.response.send_message(embed=embed)
 
 @client.tree.command(name="kits", description="Get the list of kits in a stash")
