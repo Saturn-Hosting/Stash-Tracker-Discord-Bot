@@ -39,4 +39,13 @@ async def kits(interaction: discord.Interaction, stash_id: int):
         embed.add_field(name=kit["name"], value=kit["description"], inline=False)
     await interaction.response.send_message(embed=embed)
 
+@client.tree.command(name="authlist", description="Get the list of all players in auth")
+@app_commands.describe()
+async def authlist(interaction: discord.Interaction):
+    players = stashtracker.get_players_in_auth()
+    embed = discord.Embed(title="🔒 Authlist", color=discord.Color.blue())
+    for player in players:
+        embed.add_field(name=player["name"], value=player["steamid"], inline=False)
+    await interaction.response.send_message(embed=embed)
+
 client.run(config['token'])
