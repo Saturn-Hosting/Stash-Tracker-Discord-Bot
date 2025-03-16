@@ -46,7 +46,7 @@ async def authlist(interaction: discord.Interaction):
     embed = discord.Embed(title="🔒 Authlist", color=discord.Color.blue())
     playerStr = ""
     for player in players:
-        playerStr += f"{player}\n"
+        playerStr += f"`{player}`\n"
     embed.add_field(name="Players", value=playerStr, inline=False)
     await interaction.response.send_message(embed=embed)
 
