@@ -47,7 +47,7 @@ async def authlist(interaction: discord.Interaction):
     playerStr = ""
     for player in players:
         playerStr += f"`{player}`\n"
-    embed.add_field(name="Players", value=playerStr, inline=False)
+    embed.add_field(name="Players in auth", value=playerStr, inline=False)
     await interaction.response.send_message(embed=embed)
 
 client.run(config['token'])
