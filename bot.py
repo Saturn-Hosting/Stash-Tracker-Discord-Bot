@@ -44,8 +44,10 @@ async def kits(interaction: discord.Interaction, stash_id: int):
 async def authlist(interaction: discord.Interaction):
     players = stashtracker.get_players_in_auth()
     embed = discord.Embed(title="🔒 Authlist", color=discord.Color.blue())
+    playerStr = ""
     for player in players:
-        embed.add_field(name=player["name"], value=player["steamid"], inline=False)
+        playerStr += f"{player['name']}\n"
+    embed.add_field(name="Players", value=playerStr, inline=False)
     await interaction.response.send_message(embed=embed)
 
 client.run(config['token'])
